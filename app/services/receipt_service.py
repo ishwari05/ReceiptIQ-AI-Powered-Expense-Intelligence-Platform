@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 class ReceiptService:
     @staticmethod
-    async def process_receipt(file: UploadFile, db: AsyncSession) -> dict:
+    async def process_receipt(file: UploadFile, db: AsyncSession, user_id: str) -> dict:
         """
         Full pipeline: save_file -> preprocess -> OCR -> clean -> extract -> validate -> store
         """
@@ -52,8 +52,10 @@ class ReceiptService:
                 vendor=validated_data.get("vendor"),
                 amount=validated_data.get("amount"),
                 date=validated_data.get("date"),
+                category=validated_data.get("category", "uncategorized"), # SAVE CATEGORY
                 raw_text=raw_text,
-                confidence=confidences
+                confidence=confidences,
+                user_id=user_id # LINK TO USER
             )
             db.add(db_receipt)
             await db.commit()

@@ -159,3 +159,14 @@ uploads/
 *.db
 *.log
 .DS_Store
+# Firebase
+firebase-service-account.json
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+
+# Data Exports
+expenses_export_*.csv

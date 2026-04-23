@@ -1,7 +1,9 @@
 from fastapi import FastAPI
-from app.api.routes import receipts
+from fastapi.middleware.cors import CORSMiddleware
+from app.api.routes import receipts, expenses
 from app.core.config import settings
 from app.db.database import engine, Base
+from app.core import firebase
 import logging
 from contextlib import asynccontextmanager
 
@@ -16,7 +18,17 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title=settings.PROJECT_NAME, lifespan=lifespan)
 
-app.include_router(receipts.router, prefix=settings.API_V1_STR, tags=["receipts"])
+# Add CORS Middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], # In production, replace with your frontend URL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(receipts.router, prefix=settings.API_V1_STR + "/receipts", tags=["receipts"])
+app.include_router(expenses.router, prefix=settings.API_V1_STR + "/expenses", tags=["expenses"])
 
 @app.get("/")
 def root():
